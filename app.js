@@ -11,6 +11,30 @@ randomPrime = (bits) => {
     }
   }
 
+encrypt = (encodedMsg, {e, n}) => {
+  let arr = [];
+  for (let i = 0; i < encodedMsg.length; i+=2) {
+    arr.push(bigInt(encodedMsg.substr(i, 2)).modPow(e, n))
+  }
+  return arr;
+}
+
+showEncrypt = arr => {
+  let str = "";
+  arr.forEach(el => {
+    str += el.toString();
+  });
+  return str;
+}
+
+decrypt = (encryptedMsg, {d, n}) => {
+  let dec = "";
+  for (let i = 0; i < encryptMessage.length; i++) {
+    dec += bigInt(encryptedMsg[i]).modPow(d, n).toString();
+  }
+  return dec; 
+}
+
 let p = randomPrime(10);
 let q = randomPrime(10);
 let n = p.multiply(q);
@@ -21,11 +45,16 @@ let d = e.modInv(eiler);
 let publicKey = {e, n};
 let privateKey = {d, n};
 
-let message = bigInt(123444);
+console.log('n:', n.toString());
+console.log('d:', d.toString());
+console.log('e:', e.toString());
+
+let message = "12345";
 console.log(`Message: ${message}`);
 
-let encryptMessage = bigInt(message).modPow(publicKey.e, publicKey.n);
-console.log(`Encrypted: ${encryptMessage.toString()}`);
 
-let decryptMessage = bigInt(encryptMessage).modPow(privateKey.d, privateKey.n);
+let encryptMessage = encrypt(message, publicKey);
+console.log(`Encrypted: ${showEncrypt(encryptMessage)}`);
+
+let decryptMessage = decrypt(encryptMessage, privateKey)
 console.log(`Decrypted: ${decryptMessage.toString()}`);
